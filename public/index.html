@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Hosting • Vercel Ready</title>
+  <style>
+    :root {
+      --bg: #0b0b0f;
+      --card: #14141b;
+      --border: #252532;
+      --text: #f0f0f5;
+      --muted: #8b8b9e;
+      --accent: #7c6cff;
+      --accent2: #a78bfa;
+      --success: #34d399;
+      --danger: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+    .container { max-width: 780px; margin: 0 auto; padding: 2.5rem 1.25rem; }
+    h1 { font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em; }
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c6cff, #a78bfa);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+    .subtitle { color: var(--muted); margin: 0.4rem 0 2rem; font-size: 0.95rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent2);
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.3rem; }
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    input[type="file"] { padding: 0.55rem; }
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.2rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 9px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    button:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    button:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+    .row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end; }
+    .row > div { flex: 1; min-width: 160px; }
+    code {
+      background: #1e1e28;
+      padding: 0.15rem 0.4rem;
+      border-radius: 5px;
+      font-size: 0.82em;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    pre {
+      background: #0e0e14;
+      padding: 1rem 1.1rem;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 0.78rem;
+      border: 1px solid var(--border);
+      margin-top: 0.7rem;
+      line-height: 1.45;
+    }
+    .tabs { display: flex; gap: 0.4rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .tab {
+      padding: 0.4rem 0.85rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .tab.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .hidden { display: none !important; }
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 10px;
+      word-break: break-all;
+    }
+    .result.success {
+      background: rgba(52, 211, 153, 0.08);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+    }
+    .result.error {
+      background: rgba(248, 113, 113, 0.08);
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      color: var(--danger);
+    }
+    .result a { color: var(--success); }
+    .preview { margin-top: 1rem; text-align: center; }
+    .preview img {
+      max-width: 100%;
+      max-height: 260px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .info-box {
+      background: rgba(124, 108, 255, 0.08);
+      border: 1px solid rgba(124, 108, 255, 0.25);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 2.5rem;
+      padding-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Image Hosting <span class="badge">Vercel</span></h1>
+    <p class="subtitle">Upload gambar + API Key siap dipakai dari website eksternal</p>
+
+    <div class="info-box">
+      <strong>Penting untuk production:</strong><br>
+      1. Buat <strong>Blob Store</strong> di Vercel Dashboard → Storage → Blob<br>
+      2. Tambahkan Environment Variable:<br>
+      &nbsp;&nbsp;• <code>BLOB_READ_WRITE_TOKEN</code> (otomatis dari Blob)<br>
+      &nbsp;&nbsp;• <code>API_KEYS</code> = <code>key1,key2,key3</code> (pisah koma)<br>
+      Saat ini mode demo menerima key: <code>demo-key-change-me</code>
+    </div>
+
+    <div class="card">
+      <h2>1. Upload Gambar (Web UI)</h2>
+      <div class="row">
+        <div>
+          <label>API Key</label>
+          <input type="text" id="api-key" value="demo-key-change-me" placeholder="Masukkan API Key" />
+        </div>
+      </div>
+      <div style="margin-top:0.9rem;">
+        <label>Pilih gambar</label>
+        <input type="file" id="file-input" accept="image/*" />
+      </div>
+      <div style="margin-top:1rem;">
+        <button id="upload-btn" onclick="upload()">Upload ke Vercel Blob</button>
+      </div>
+      <div id="result" class="hidden"></div>
+      <div id="preview" class="preview hidden"></div>
+    </div>
+
+    <div class="card">
+      <h2>2. Contoh API (untuk website luar)</h2>
+      <div class="tabs">
+        <button class="tab active" onclick="showTab('curl')">cURL</button>
+        <button class="tab" onclick="showTab('js')">JavaScript</button>
+        <button class="tab" onclick="showTab('php')">PHP</button>
+      </div>
+
+      <div id="tab-curl">
+<pre>curl -X POST https://YOUR-PROJECT.vercel.app/api/upload \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -F "file=@/path/to/image.jpg"</pre>
+      </div>
+
+      <div id="tab-js" class="hidden">
+<pre>const formData = new FormData();
+formData.append('file', fileInput.files[0]);
+
+const res = await fetch('https://YOUR-PROJECT.vercel.app/api/upload', {
+  method: 'POST',
+  headers: {
+    'X-API-Key': 'YOUR_API_KEY'
+  },
+  body: formData
+});
+
+const data = await res.json();
+if (data.success) {
+  console.log('URL:', data.url);
+  // &lt;img src={data.url} /&gt;
+}</pre>
+      </div>
+
+      <div id="tab-php" class="hidden">
+<pre>$ch = curl_init('https://YOUR-PROJECT.vercel.app/api/upload');
+curl_setopt_array($ch, [
+  CURLOPT_POST => true,
+  CURLOPT_HTTPHEADER => ['X-API-Key: YOUR_API_KEY'],
+  CURLOPT_POSTFIELDS => [
+    'file' => new CURLFile('/path/to/image.jpg')
+  ],
+  CURLOPT_RETURNTRANSFER => true
+]);
+$response = json_decode(curl_exec($ch), true);
+echo $response['url'];</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>3. Response Contoh</h2>
+<pre>{
+  "success": true,
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "url": "https://xxxxx.public.blob.vercel-storage.com/images/550e....jpg",
+  "size": 245760,
+  "contentType": "image/jpeg",
+  "filename": "foto.jpg"
+}</pre>
+    </div>
+
+    <footer>
+      Image Hosting for Vercel • Powered by Vercel Blob • Max 10 MB
+    </footer>
+  </div>
+
+  <script>
+    function showTab(id) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      ['curl', 'js', 'php'].forEach(x => {
+        document.getElementById('tab-' + x).classList.toggle('hidden', x !== id);
+      });
+    }
+
+    async function upload() {
+      const btn = document.getElementById('upload-btn');
+      const input = document.getElementById('file-input');
+      const key = document.getElementById('api-key').value.trim();
+      const resultEl = document.getElementById('result');
+      const previewEl = document.getElementById('preview');
+
+      if (!input.files || !input.files[0]) {
+        alert('Pilih file gambar dulu');
+        return;
+      }
+      if (!key) {
+        alert('Masukkan API Key');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Uploading...';
+      resultEl.classList.add('hidden');
+      previewEl.classList.add('hidden');
+
+      try {
+        const formData = new FormData();
+        formData.append('file', input.files[0]);
+
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'X-API-Key': key },
+          body: formData
+        });
+
+        const data = await res.json();
+        resultEl.classList.remove('hidden');
+
+        if (data.success) {
+          resultEl.className = 'result success';
+          resultEl.innerHTML = `
+            ✅ Upload berhasil!<br><br>
+            <strong>URL:</strong><br>
+            <a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>
+          `;
+          previewEl.classList.remove('hidden');
+          previewEl.innerHTML = `<img src="${data.url}" alt="preview" />`;
+        } else {
+          resultEl.className = 'result error';
+          resultEl.innerHTML = `❌ ${data.error || 'Upload gagal'}`;
+        }
+      } catch (err) {
+        resultEl.classList.remove('hidden');
+        resultEl.className = 'result error';
+        resultEl.innerHTML = `❌ Network error: ${err.message}`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Upload ke Vercel Blob';
+      }
+    }
+  </script>
+</body>
+</html>
